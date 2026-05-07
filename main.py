@@ -28,3 +28,24 @@ DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1),
 OPPONENT = {"black": "white", "white": "black"}
 PLAYER_RU = {"black": "Чёрные", "white": "Белые"}
 PLAYER_RU = {"black": "Чёрные", "white": "Белые"}
+
+def make_board() -> list[list]:
+    board = [[None] * BOARD_SIZE for _ in range(BOARD_SIZE)]
+    m = BOARD_SIZE // 2
+    board[m - 1][m - 1] = "white"
+    board[m - 1][m]     = "black"
+    board[m][m - 1]     = "black"
+    board[m][m]         = "white"
+    return board
+
+def _captured_in_dir(board, row, col, player, dr, dc) -> list[tuple]:
+    opp = OPPONENT[player]
+    r, c = row + dr, col + dc
+    line = []
+    while 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and board[r][c] == opp:
+        line.append((r, c))
+        r += dr
+        c += dc
+    if line and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and board[r][c] == player:
+        return line
+    return []
