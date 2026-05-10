@@ -49,3 +49,40 @@ def _captured_in_dir(board, row, col, player, dr, dc) -> list[tuple]:
     if line and 0 <= r < BOARD_SIZE and 0 <= c < BOARD_SIZE and board[r][c] == player:
         return line
     return []
+
+def is_valid(board, row, col, player) -> bool:
+    if board[row][col] is not None:
+        return False
+    return any(_captured_in_dir(board, row, col, player, dr, dc)
+               for dr, dc in DIRECTIONS)
+
+def valid_moves(board, player) -> list[tuple]:
+    return [(r, c)
+            for r in range(BOARD_SIZE)
+            for c in range(BOARD_SIZE)
+            if is_valid(board, r, c, player)]
+
+def apply_move(board, row, col, player) -> list[list]:
+    new = [row_[:] for row_ in board]
+    new[row][col] = player
+    for dr, dc in DIRECTIONS:
+        for r, c in _captured_in_dir(new, row, col, player, dr, dc):
+            new[r][c] = player
+    return new
+
+def count(board) -> tuple[int, int]:
+    black = sum(cell == "black" for row in board for cell in row)
+    white = sum(cell == "white" for row in board for cell in row)
+    return black, white
+
+def board_full(board) -> bool:
+    return all(cell is not None for row in board for cell in row)
+
+def game_over(board) -> bool:
+    return board_full(board) or (
+        not valid_moves(board, "black") and not valid_moves(board, "white")
+    )
+
+def next_player(board, current) -> str:
+    opp = OPPONENT[current]
+    return opp if valid_moves(board, opp) else current
