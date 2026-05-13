@@ -86,3 +86,36 @@ def game_over(board) -> bool:
 def next_player(board, current) -> str:
     opp = OPPONENT[current]
     return opp if valid_moves(board, opp) else current
+
+def _dark_button(parent, text, command, **kw) -> tk.Button:
+    return tk.Button(parent, text=text, command=command,
+                     bg=PALETTE["btn_dark_bg"], fg=PALETTE["btn_dark_fg"],
+                     activebackground="#333", activeforeground="white",
+                     relief="flat", font=("Arial", 14),
+                     **kw)
+
+def _light_button(parent, text, command, **kw) -> tk.Button:
+
+    default_kw = {
+        "bg": PALETTE["btn_light_bg"],
+        "fg": "black",
+        "relief": "raised",
+        "font": ("Arial", 12)
+    }
+    default_kw.update(kw)
+    return tk.Button(parent, text=text, command=command, **default_kw)
+
+def _piece_score_widget(parent, color) -> tuple[tk.Canvas, tk.Label]:
+    frame = tk.Frame(parent, bg=PALETTE["bg"])
+    frame.pack(side="left", padx=20)
+    canvas = tk.Canvas(frame, width=40, height=40,
+                       bg=PALETTE["bg"], highlightthickness=0)
+    canvas.pack(side="left")
+    fill = "black" if color == "black" else "white"
+    canvas.create_oval(5, 5, 35, 35, fill=fill, outline="black", width=1)
+
+    label = tk.Label(frame, text="2",
+                     font=("Arial", 18, "bold"),
+                     bg=PALETTE["bg"], fg="black")
+    label.pack(side="left", padx=6)
+    return canvas, label
