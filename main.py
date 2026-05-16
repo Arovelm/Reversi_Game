@@ -119,3 +119,21 @@ def _piece_score_widget(parent, color) -> tuple[tk.Canvas, tk.Label]:
                      bg=PALETTE["bg"], fg="black")
     label.pack(side="left", padx=6)
     return canvas, label
+
+class MenuScreen(tk.Frame):
+
+    def __init__(self, parent, on_start):
+        super().__init__(parent, bg=PALETTE["bg"])
+        self.pack(fill="both", expand=True)
+
+        tk.Label(self, text="Реверси",
+                 font=("Arial", 42, "bold"),
+                 bg=PALETTE["bg"], fg="black").place(relx=0.5, rely=0.38, anchor="center")
+
+        _dark_button(self, "1 игрок",  lambda: on_start("1p"), width=12).place(
+            relx=0.5, rely=0.52, anchor="center")
+        _dark_button(self, "2 игрока", lambda: on_start("2p"), width=12).place(
+            relx=0.5, rely=0.63, anchor="center")
+
+        _light_button(self, "Выход", self.quit, font=("Arial", 11), width=8).place(
+            relx=0.97, rely=0.97, anchor="se")
