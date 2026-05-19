@@ -137,3 +137,50 @@ class MenuScreen(tk.Frame):
 
         _light_button(self, "Выход", self.quit, font=("Arial", 11), width=8).place(
             relx=0.97, rely=0.97, anchor="se")
+
+class GameScreen(tk.Frame):
+
+    def __init__(self, parent, mode, on_exit):
+        super().__init__(parent, bg=PALETTE["bg"])
+        self.pack(fill="both", expand=True)
+
+        self.mode = mode
+        self.on_exit = on_exit
+        self.board = make_board()
+        self.current = "black"
+        self.is_over = False
+
+        self._build_ui()
+        self._draw()
+
+    def _build_ui(self):
+        top = tk.Frame(self, bg=PALETTE["bg"])
+        top.pack(pady=(12, 6))
+
+        self._blk_canvas, self._blk_lbl = _piece_score_widget(top, "black")
+        self._wht_canvas, self._wht_lbl = _piece_score_widget(top, "white")
+
+        board_frame = tk.Frame(self, bg=PALETTE["bg"])
+        board_frame.pack()
+
+        size = BOARD_SIZE * CELL
+        self._canvas = tk.Canvas(board_frame,
+                                 width=size, height=size,
+                                 bg=PALETTE["board"],
+                                 highlightthickness=2,
+                                 highlightbackground=PALETTE["board_border"])
+        self._canvas.pack()
+
+        for r in range(BOARD_SIZE):
+            for c in range(BOARD_SIZE):
+                self._canvas.create_rectangle(
+                    c * CELL, r * CELL,
+                    (c + 1) * CELL, (r + 1) * CELL,
+                    outline=PALETTE["grid"], width=1,
+                    fill=PALETTE["board"]
+                )
+
+        self._canvas.bind("<Button-1>", self._on_click)
+
+        _light_button(self, "Выход",
+                      self.on_exit, width=22).pack(side="bottom", pady=10)
