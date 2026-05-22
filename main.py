@@ -184,3 +184,36 @@ class GameScreen(tk.Frame):
 
         _light_button(self, "Выход",
                       self.on_exit, width=22).pack(side="bottom", pady=10)
+    def _on_click(self, event):
+        if self.is_over:
+            return
+        if self.mode == "1p" and self.current == "white":
+            return
+
+        col = event.x // CELL
+        row = event.y // CELL
+        if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE:
+            if is_valid(self.board, row, col, self.current):
+                self._make_move(row, col)
+
+    def _make_move(self, row, col):
+        self.board = apply_move(self.board, row, col, self.current)
+        if game_over(self.board):
+            self.is_over = True
+            self._draw()
+            self.after(400, self._show_result)
+            return
+        self.current = next_player(self.board, self.current)
+        self._draw()
+        if self.mode == "1p" and self.current == "white":
+            self.after(BOT_DELAY_MS, self._bot_move)
+
+    def _bot_move(self):
+        if self.is_over or self.current != "white":
+            return
+        moves = valid_moves(self.board, "white")
+        if moves:
+            self._make_move(*random.choice(moves))
+        else:
+            self.current = next_player(self.board, self.current)
+            self._draw()
