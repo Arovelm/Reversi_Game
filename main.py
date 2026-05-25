@@ -217,3 +217,47 @@ class GameScreen(tk.Frame):
         else:
             self.current = next_player(self.board, self.current)
             self._draw()
+
+    def _draw(self):
+        self._canvas.delete("piece", "hint")
+
+        for r in range(BOARD_SIZE):
+            for c in range(BOARD_SIZE):
+                piece = self.board[r][c]
+                if piece is None:
+                    continue
+                cx = c * CELL + CELL // 2
+                cy = r * CELL + CELL // 2
+                rad = CELL // 2 - PIECE_PAD
+                self._canvas.create_oval(cx - rad, cy - rad,
+                                         cx + rad, cy + rad,
+                                         fill=piece, outline="black",
+                                         width=1, tags="piece")
+
+        if not self.is_over:
+            for r, c in valid_moves(self.board, self.current):
+                cx = c * CELL + CELL // 2
+                cy = r * CELL + CELL // 2
+                rad = CELL // 2 - HINT_PAD
+                self._canvas.create_oval(cx - rad, cy - rad,
+                                         cx + rad, cy + rad,
+                                         fill=PALETTE["hint_fill"],
+                                         outline=PALETTE["hint_outline"],
+                                         width=2, tags="hint")
+
+        blk, wht = count(self.board)
+        self._blk_lbl.config(text=str(blk))
+        self._wht_lbl.config(text=str(wht))
+
+        self._blk_canvas.delete("ring")
+        self._wht_canvas.delete("ring")
+        if not self.is_over:
+            ring = self._blk_canvas if self.current == "black" else self._wht_canvas
+            ring.create_oval(2, 2, 38, 38,
+                             outline=PALETTE["turn_ring"], width=3, tags="ring")
+
+    def _show_result(self):
+        blk, wht = count(self.board)
+        for w in self.winfo_children():
+            w.destroy()
+        ResultScreen(self, blk, wht, on_menu=self.on_exit)
