@@ -261,3 +261,42 @@ class GameScreen(tk.Frame):
         for w in self.winfo_children():
             w.destroy()
         ResultScreen(self, blk, wht, on_menu=self.on_exit)
+        
+class ResultScreen(tk.Frame):
+
+    def __init__(self, parent, black_n, white_n, on_menu):
+        super().__init__(parent, bg=PALETTE["bg"])
+        self.pack(fill="both", expand=True)
+
+        if black_n > white_n:
+            text = "Черные победили"
+        elif white_n > black_n:
+            text = "Белые победили"
+        else:
+            text = "Ничья"
+
+        tk.Label(self, text=text,
+                 font=("Arial", 30, "bold"),
+                 bg=PALETTE["bg"], fg="black").pack(pady=50)
+
+        score_row = tk.Frame(self, bg=PALETTE["bg"])
+        score_row.pack(pady=10)
+        self._add_score(score_row, "black", black_n)
+        self._add_score(score_row, "white", white_n)
+
+        _dark_button(self, "Главное меню", on_menu,
+                     width=15).pack(pady=50)
+
+    def _add_score(self, parent, color, n):
+        frame = tk.Frame(parent, bg=PALETTE["bg"])
+        frame.pack(side="left", padx=30)
+
+        canvas = tk.Canvas(frame, width=40, height=40,
+                           bg=PALETTE["bg"], highlightthickness=0)
+        canvas.pack(side="left")
+        fill = "black" if color == "black" else "white"
+        canvas.create_oval(5, 5, 35, 35, fill=fill, outline="black", width=1)
+
+        tk.Label(frame, text=str(n),
+                 font=("Arial", 18, "bold"),
+                 bg=PALETTE["bg"], fg="black").pack(side="left", padx=8)
