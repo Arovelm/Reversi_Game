@@ -261,7 +261,7 @@ class GameScreen(tk.Frame):
         for w in self.winfo_children():
             w.destroy()
         ResultScreen(self, blk, wht, on_menu=self.on_exit)
-        
+
 class ResultScreen(tk.Frame):
 
     def __init__(self, parent, black_n, white_n, on_menu):
@@ -300,3 +300,32 @@ class ResultScreen(tk.Frame):
         tk.Label(frame, text=str(n),
                  font=("Arial", 18, "bold"),
                  bg=PALETTE["bg"], fg="black").pack(side="left", padx=8)
+        
+class ReversiApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Реверси")
+        self.geometry(f"{WINDOW_W}x{WINDOW_H}")
+        self.resizable(False, False)
+        self.configure(bg=PALETTE["bg"])
+
+        self._root_frame = tk.Frame(self, bg=PALETTE["bg"])
+        self._root_frame.pack(fill="both", expand=True)
+
+        self._show_menu()
+
+    def _clear(self):
+        for w in self._root_frame.winfo_children():
+            w.destroy()
+
+    def _show_menu(self):
+        self._clear()
+        MenuScreen(self._root_frame, on_start=self._start_game)
+
+    def _start_game(self, mode):
+        self._clear()
+        GameScreen(self._root_frame, mode=mode, on_exit=self._show_menu)
+
+
+if __name__ == "__main__":
+    ReversiApp().mainloop()
