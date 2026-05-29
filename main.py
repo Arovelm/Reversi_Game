@@ -27,3 +27,4 @@ DIRECTIONS = [(-1, -1), (-1, 0), (-1, 1),
 
 OPPONENT = {"black": "white", "white": "black"}
 PLAYER_RU = {"black": "Чёрные", "white": "Белые"}
+PLAYER_RU = {"black": "Чёрные", "white": "Белые"}
